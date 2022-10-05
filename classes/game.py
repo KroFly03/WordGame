@@ -1,44 +1,39 @@
 from classes.player import Player
-from classes.basic_word import BasicWord
 from tools.utils import get_random_word
 
 
-class Game(Player, BasicWord):
+class Game:
+    FILENAME = 'words.json'
 
-    def __init__(self, player, filename):
-        self.player = Player(player)
-        self.basic_word = get_random_word(filename)
+    print('Введите имя игрока')
+    user_name = input()
 
-    def __repr__(self):
-        return f'Пользователь: {self.player} Слово: {self.basic_word}'
+    player = Player(user_name)
+    basic_word = get_random_word(FILENAME)
 
-    def check_word(self, user_word):
-        """Валидация введенного пользователем слова"""
-        if len(user_word) < 3:
+    print(basic_word)
+    print(f'Привет {player.user_name}! \
+                  \nСоставьте {basic_word.count_sub_words()} слов из слова {basic_word.word} \
+                  \nСлова не должны быть короче 3 букв \
+                  \nЧтобы закончить игру, угадайте все слова или напишите "stop" \
+                  \nПоехали, ваше первое слово?')
+
+    while player.count_entered_words() < basic_word.count_sub_words():
+        user_input = input().lower()
+        if user_input in ['stop', 'стоп']:
+            break
+
+        elif len(user_input) < 3:
             print('Слишком короткое слово')
-            return False
 
-        if not self.basic_word.is_sub_words(user_word):
+        elif not basic_word.is_sub_words(user_input):
             print('Неверно')
-            return False
 
-        if self.player.is_entered(user_word):
+        elif player.is_entered(user_input):
             print('Уже использовано')
-            return False
 
-        if self.basic_word.sub_words.is_sub_words(user_word):
+        elif basic_word.is_sub_words(user_input):
             print('Верно')
-            return True
+            player.enter_word(user_input)
 
-        return False
-
-    def is_stopped(self, user_input):
-        """Проверка на законченность цикла"""
-        return user_input in ['stop', 'стоп']
-
-    def show_greetings(self):
-        print(f'Привет {self.player.user_name}! \
-              \nСоставьте {self.basic_word.count_sub_words()} слов из слова {self.basic_word.show_word()} \
-              \nСлова не должны быть короче 3 букв \
-              \nЧтобы закончить игру, угадайте все слова или напишите "stop" \
-              \nПоехали, ваше первое слово?')
+    print(f'Игра завершена, вы угадали {player.count_entered_words()} слов!')

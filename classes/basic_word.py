@@ -14,7 +14,3 @@ class BasicWord:
     def count_sub_words(self):
         """Вывод количества подслов определенного слова"""
         return len(self.sub_words)
-
-    def show_word(self):
-        """Вывод слова"""
-        return self.basic_word.word
